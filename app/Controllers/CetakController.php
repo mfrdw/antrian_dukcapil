@@ -22,10 +22,11 @@ class CetakController extends Controller
 
     public function cetakPerekaman()
     {
-        $model = new M_Antrian();
-        $antrian = $model->where('kategori', 'PEREKEMAN')->first();
+        $model = new M_DataAntri();
+        $noAntri = $model->generateNoAntriPerekaman(); 
+
         $data = [
-            'antri' => $antrian,
+            'antri' => $noAntri, 
         ];
 
         return view('user/cetak_antrian', $data);

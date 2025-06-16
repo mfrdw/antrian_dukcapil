@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title> <?= $title ?> | Antrian Dukcapil Kab. Lamandau</title>
     <!-- plugins:css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <link rel="stylesheet" href="../dist/assets/vendors/feather/feather.css">
     <link rel="stylesheet" href="../dist/assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../dist/assets/vendors/ti-icons/css/themify-icons.css">
@@ -23,7 +26,8 @@
     <link rel="stylesheet" href="../dist/assets/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="../dist/assets/images/favicon.png" />
-  </head>
+</head>
+
 <body class="with-welcome-text">
     <?= $this->include('template/sidebar'); ?>
     <?= $this->renderSection('content'); ?>

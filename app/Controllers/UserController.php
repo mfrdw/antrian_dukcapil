@@ -28,16 +28,6 @@ class UserController extends BaseController
         return view('user/ambil_antrian', $data);
     }
 
-
-    public function ambil_antrian_ajax()
-    {
-        $model = new M_DataAntri();
-        $generated = $model->generateNoAntri();
-        
-        // Return data nomor antrian dalam format JSON
-        return $this->response->setJSON(['no_antri' => $generated]);
-    }
-
     public function lihat_antrian(): string{
 
         $data = [

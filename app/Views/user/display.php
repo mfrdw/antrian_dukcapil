@@ -1,16 +1,6 @@
 <?= $this->extend('layout/header') ?>
-
 <?= $this->section('content') ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loket Antrian</title>
-    <!-- CDN Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Styling untuk Loket Card */
         .loket-card {
@@ -135,9 +125,7 @@
             }
         }
     </style>
-</head>
 
-<body>
     <div class="container-fluid mt-5">
         <div class="text-center mb-5">
             <h1 class="display-4 font-weight-bold text-uppercase mb-4">LOKET PELAYANAN</h1>
@@ -227,13 +215,5 @@
         // Memanggil updateQueue setiap 5 detik
         setInterval(updateQueue, 5000);
     </script>
-
-    <!-- JS Bootstrap 5 -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-
-</body>
-
-</html>
 
 <?= $this->endSection() ?>

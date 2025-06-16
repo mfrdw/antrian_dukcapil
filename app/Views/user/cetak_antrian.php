@@ -1,157 +1,110 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nomor Antrian</title>
-    <link rel="stylesheet" href="styles.css">
-
+    <title>Cetak Antrian</title>
     <style>
-        /* styles.css */
+    @media print {
+        @page {
+            size: 57.5mm auto;
+            margin: 0;
+        }
+
         body {
-            font-family: 'Courier New', Courier, monospace;  /* Font Monospace untuk tampilan seperti tiket */
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background: white;
+            font-family: 'Courier New', monospace;
         }
 
-        .container {
-            width: 300px;  /* Lebar container sesuai dengan ukuran tiket */
-            height: 400px; /* Tinggi tiket */
-            padding: 20px;
-            border: 2px solid #000;
-            background-color: white;
+        .ticket {
+            width: 57.5mm;
+            margin-left: 1mm;
+            /* ✨ Geser sedikit ke kanan */
+            padding: 6mm 3mm;
+            /* ✨ padding horizontal dikurangi */
+            box-sizing: border-box;
             text-align: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 14px; /* Ukuran font agar sesuai dengan tiket */
-            border-radius: 10px;
+            page-break-after: avoid;
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
         }
 
-        /* Logo dan Header */
-        .header-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #000; /* Garis pemisah di bawah header */
-        }
-
-        .logo {
-            width: 50px;
-            height: auto;
-            margin-right: 10px;
-        }
-
-        .header {
-            font-size: 18px;
+        .title {
+            font-size: 3.6mm;
             font-weight: bold;
-            color: #333;
-            text-align: left;
+            text-transform: uppercase;
+            line-height: 1.5;
+            margin-bottom: 3mm;
         }
 
-        /* Nomor Antrian */
-        .queue-number {
-            font-size: 50px;  /* Ukuran font besar untuk nomor antrian */
-            font-weight: bold;
+        .sub-title {
+            font-size: 3.2mm;
+            font-weight: normal;
+            margin-bottom: 4mm;
             color: #000;
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px 0;
-            border: 3px solid #000;
-            border-radius: 10px;
-            width: 250px;
         }
 
-        /* Pesan */
-        .message {
-            font-size: 14px;
-            color: #555;
-            margin-top: 30px;
+        .antrian {
+            font-size: 14mm;
+            font-weight: bold;
+            border: 2px dashed #000;
+            padding: 5mm 0;
+            margin: 4mm 0;
+            border-radius: 2mm;
         }
 
-        /* Tanggal dan Waktu (footer) */
-        .datetime {
-            font-size: 14px;
-            color: #888;
-            margin-top: 10px;
-            text-align: center;
+        .msg {
+            font-size: 3.5mm;
+            margin-top: 4mm;
+            margin-bottom: 3mm;
         }
 
-        /* Media Query untuk menyesuaikan tampilan saat print */
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-            }
-
-            .container {
-                width: 300px;  /* Ukuran lebar kertas tiket */
-                height: 400px; /* Ukuran tinggi kertas tiket */
-                padding: 20px;
-                font-size: 12px; /* Menyesuaikan font saat dicetak */
-            }
-
-            .logo {
-                width: 50px;
-            }
-
-            .queue-number {
-                font-size: 50px;
-            }
-
-            .message, .datetime {
-                font-size: 12px;
-            }
+        .time {
+            font-size: 3mm;
+            color: #444;
+            border-top: 1px dashed #000;
+            padding-top: 2mm;
         }
+    }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <!-- Header dengan logo -->
-        <div class="header-container">
-            <img src="../dist/assets/images/lamandau.png" alt="Logo" class="logo">
-            <div class="header">
-                Dinas Kependudukan dan Pencatatan Sipil<br>
-                Kabupaten Lamandau
-            </div>
+    <div class="ticket">
+        <div class="title">DINAS KEPENDUDUKAN DAN PENCATATAN SIPIL</div>
+        <div class="sub-title">KABUPATEN LAMANDAU</div>
+
+        <div class="antrian"><?= $antri ?></div>
+
+        <div class="msg">
+            Silakan menunggu hingga nomor Anda dipanggil
         </div>
 
-        <!-- Nomor Antrian -->
-        <div class="queue-number">
-            <span id="queue-number"><?= $antri ?></span>
-        </div>
-
-        <div class="message">
-            Silakan menunggu nomor antrian Anda dipanggil.
-        </div>
-
-        <div class="datetime">
+        <div class="time">
             <script>
-                var today = new Date();
+            const now = new Date();
+            const hari = new Intl.DateTimeFormat('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }).format(now);
 
-                // Mendapatkan hari dalam bahasa Indonesia
-                var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-                var formattedDate = new Intl.DateTimeFormat('id-ID', options).format(today);
+            const jam = String(now.getHours()).padStart(2, '0');
+            const menit = String(now.getMinutes()).padStart(2, '0');
+            const detik = String(now.getSeconds()).padStart(2, '0');
+            const waktu = `${jam}:${menit}:${detik}`;
 
-                // Menambahkan "WIB" di akhir
-                var finalDate = formattedDate + ' WIB';
-
-                // Menampilkan hasil
-                document.write(finalDate);
+            document.write(`${hari} ${waktu} WIB`);
             </script>
         </div>
     </div>
 
     <script>
-        window.print();
+    window.onload = () => window.print();
     </script>
 </body>
+
 </html>
