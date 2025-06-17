@@ -84,6 +84,7 @@ public function getAntrian()
     // Ambil semua antrian sesuai jenis dan tanggal
     $antrian = $model->where('loket_antri', $loket_antri)
                      ->where('DATE(created_at)', $today)
+                     ->orderBy('created_at', 'DESC')
                      ->findAll();
 
     // Filter: hanya antrian dengan nama_loket yang PERSIS sama dengan role_loket
@@ -133,71 +134,36 @@ public function getAntrian()
     return $this->response->setJSON($result);
 }
 
-public function updateStatusAntrian()
+
+
+public function updateNamaLoket($id)
 {
-    $request = service('request');
-    $no_antri = $request->getPost('no_antri');
-
-    if (!$no_antri) {
+    // Validasi ID
+    if (!is_numeric($id) || $id <= 0) {
         return $this->response->setJSON([
             'status' => 'error',
-            'message' => 'Nomor antrian tidak dikirim.'
+            'message' => 'ID tidak valid.'
         ]);
     }
 
-    // Ambil ID user dari session (sesuai autentikasi login)
-    $userId = session()->get('id'); // pastikan session login menyimpan ID user
+    $model = new M_UserModel();
 
-    if (!$userId) {
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'User belum login.'
-        ]);
-    }
+    $role_loket = $model->where('role_loket', $id);
 
-    // Ambil role_loket user dari tabel users
-    $userModel = new M_UserModel();
-    $user = $userModel->find($userId);
+    // Data manual yang ingin dikirim
+    $namaLoket = $role_loket;
 
-    if (!$user || empty($user['role_loket'])) {
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'Data role_loket user tidak ditemukan.'
-        ]);
-    }
+    // Panggil model antrian
+    $antrianModel = new M_DataAntri();
+    $updated = $antrianModel->update($id, ['nama_loket' => $namaLoket]);
 
-    $roleLoket = $user['role_loket']; // Misalnya: "Loket 1"
-
-    // Update nama_loket di tabel antrian sesuai no_antri
-    $antriModel = new M_DataAntri();
-    $updated = $antriModel->where('no_antri', $no_antri)
-                          ->set(['nama_loket' => $roleLoket])
-                          ->update();
-
+    // Berikan respon JSON
     return $this->response->setJSON([
         'status' => $updated ? 'success' : 'failed',
-        'message' => $updated ? 'Antrian berhasil diperbarui.' : 'Gagal memperbarui antrian.'
+        'message' => $updated ? 'Nama loket berhasil diperbarui.' : 'Gagal memperbarui nama loket.'
     ]);
 }
 
 
-
-
-
-    public function add_loket($id){
-
-        $model = new M_DataAntri();
-
-
-        $data = [
-            'nama_loket' => 'Loket 1'
-        ];
-
-            if ($model->save($data)) {
-                return redirect()->to('/ambil_antrian');
-            } else {
-                return redirect()->back()->with('error', 'Gagal menyimpan antrian.');
-            }
-    }
 
 }

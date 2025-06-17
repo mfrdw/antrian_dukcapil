@@ -8,27 +8,28 @@ use App\Models\M_DataAntri;
 
 class CetakController extends Controller
 {
-    public function cetakPelayanan()
-    {
-        $model = new M_DataAntri();
-        $noAntri = $model->generateNoAntriPelayanan(); 
+   public function cetakPelayanan($id)
+{
+    $model = new M_DataAntri();
+    $antrian = $model->find($id);
 
-        $data = [
-            'antri' => $noAntri, 
-        ];
-
-        return view('user/cetak_antrian', $data);
+    if (!$antrian || $antrian['loket_antri'] !== 'PELAYANAN') {
+        throw new \CodeIgniter\Exceptions\PageNotFoundException("Antrian pelayanan tidak ditemukan.");
     }
 
-    public function cetakPerekaman()
-    {
-        $model = new M_DataAntri();
-        $noAntri = $model->generateNoAntriPerekaman(); 
+    return view('user/cetak_antrian', ['antri' => $antrian['no_antri']]);
+}
 
-        $data = [
-            'antri' => $noAntri, 
-        ];
+public function cetakPerekaman($id)
+{
+    $model = new M_DataAntri();
+    $antrian = $model->find($id);
 
-        return view('user/cetak_antrian', $data);
+    if (!$antrian || $antrian['loket_antri'] !== 'REKAM E-KTP') {
+        throw new \CodeIgniter\Exceptions\PageNotFoundException("Antrian perekaman tidak ditemukan.");
     }
+
+    return view('user/cetak_antrian', ['antri' => $antrian['no_antri']]);
+}
+
 }

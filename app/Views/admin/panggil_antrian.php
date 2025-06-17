@@ -87,7 +87,6 @@
                         <td>${antrian.no_antri}</td>
                         <td>`;
 
-                // Tampilkan tombol hanya untuk 2 data teratas (index 0 dan 1)
                 if (index < 2) {
                     rows += `
                         <button class="btn btn-success mt-2" onclick="playAudio('${antrian.no_antri}')">
@@ -111,58 +110,79 @@
 
 
 
-    <!-- Tabel 2 -->
     <script>
     function loadAntrian2() {
-        $.getJSON('/get-antrian2', function(data) {
-            let rows = '';
-            let counter = 1;
+        fetch('/get-antrian2')
+            .then(response => response.json())
+            .then(data => {
+                let rows = '';
+                let counter = 1;
 
-            data.forEach(function(antrian) {
-                rows += `
+                data.forEach(antrian => {
+                    rows += `
                 <tr>
                     <td>${counter++}</td>
                     <td>${antrian.loket_antri}</td>
                     <td>${antrian.no_antri}</td>
                     <td>
-                        <button class="btn btn-success mt-2" onclick="playAudioAndUpdate('${antrian.no_antri}')">
-                            <i class="fas fa-volume-up"></i> Panggil
+                        <button class="btn btn-success mt-2" onclick="playAudioAndUpdate(this, ${antrian.id}, '${antrian.no_antri}')">
+                            <i class="fas fa-volume-up"></i>
                         </button>
                     </td>
                 </tr>`;
-            });
+                });
 
-            $('#antrian2-body').html(rows);
-        });
+                document.getElementById('antrian2-body').innerHTML = rows;
+            })
+            .catch(error => {
+                console.error('Gagal memuat antrian:', error);
+            });
     }
 
-    // Panggil saat halaman load
+    // Jalankan saat halaman pertama kali load
     loadAntrian2();
-
-    // Refresh otomatis tiap 5 detik
     setInterval(loadAntrian2, 5000);
 
-    // Fungsi: mainkan audio + update ke database
-    function playAudioAndUpdate(noAntri) {
-        var audioPath = '../dist/assets/audio/' + noAntri + '.mp3';
-        var audio = new Audio(audioPath);
-        audio.play();
-        console.log("Memanggil audio untuk antrian: " + noAntri);
+    // Fungsi: mainkan audio + update status dengan spinner
+    function playAudioAndUpdate(button, id, noAntri) {
+        const originalHTML = button.innerHTML;
 
-        // Kirim update ke server
-        $.post('/update-status-antrian', {
-            no_antri: noAntri
-        }, function(response) {
-            if (response.status === 'success') {
-                console.log('Status berhasil diperbarui.');
-            } else {
-                console.warn('Gagal memperbarui status:', response.message);
-            }
-        }).fail(function(xhr) {
-            console.error('Request gagal:', xhr.responseText);
-        });
+        // Tampilkan spinner di tombol
+        button.innerHTML =
+            `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Memanggil...`;
+        button.disabled = true;
+
+        // Mainkan audio
+        const audioPath = '../dist/assets/audio/' + noAntri + '.mp3';
+        const audio = new Audio(audioPath);
+        audio.play();
+
+        // Kirim permintaan update ke server
+        fetch(`/update-status-antrian/${id}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    console.log('✅ Antrian berhasil diperbarui.');
+                } else {
+                    console.warn('⚠ Gagal update:', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error saat update:', error);
+            })
+            .finally(() => {
+                // Reset tombol setelah beberapa detik (opsional)
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.disabled = false;
+                }, 3000);
+            });
     }
     </script>
+
+
 
 
 

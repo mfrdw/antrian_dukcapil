@@ -33,4 +33,12 @@ class LoginController extends Controller
             return redirect()->back()->with('error', 'Username atau password salah');
         }
     }
+
+    public function logout()
+    {
+        session()->destroy();
+
+        return redirect()->to('/login')->with('success', 'Berhasil logout.');
+    }
+
 }

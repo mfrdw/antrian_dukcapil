@@ -93,9 +93,9 @@ h1 {
                         <p id="message-1" style="display: none; color: red;">Tunggu sebentar...</p>
                     </form>
 
-                    <button class="btn btn-primary" onclick="window.location.href='<?= base_url('cetakPelayanan') ?>'">
+                    <!-- <button class="btn btn-primary" onclick="window.location.href='<?= base_url('cetakPelayanan') ?>'">
                         <i class="fas fa-print"></i> Cetak Pelayanan
-                    </button>
+                    </button> -->
 
                 </div>
             </div>
@@ -109,48 +109,82 @@ h1 {
                         <p id="message-2" style="display: none; color: red;">Tunggu sebentar...</p>
                     </form>
 
-                    <button class="btn btn-primary" onclick="window.location.href='<?= base_url('cetakPerekaman') ?>'">
+                    <!-- <button class="btn btn-primary" onclick="window.location.href='<?= base_url('cetakPerekaman') ?>'">
                         <i class="fas fa-print"></i> Cetak Perekaman
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
 <script>
-// Fungsi untuk menonaktifkan klik dan menampilkan keterangan
-function disableClick(elementId, formId, messageElementId, message, waitTime) {
+function disableClickAndSubmit(elementId, formId, messageElementId, message, waitTime, jenisCetak) {
     const element = document.getElementById(elementId);
     const form = document.getElementById(formId);
     const messageElement = document.getElementById(messageElementId);
 
-    // Menonaktifkan interaksi dan menampilkan pesan
-    element.style.pointerEvents = 'none'; // Menonaktifkan klik
-    messageElement.innerHTML = message; // Menampilkan keterangan
-    messageElement.style.display = 'block'; // Menampilkan pesan
+    // Tampilkan pesan & nonaktifkan klik
+    element.style.pointerEvents = 'none';
+    messageElement.innerHTML = message;
+    messageElement.style.display = 'block';
 
-    // Setelah jeda waktu (5000 ms = 5 detik), aktifkan kembali klik
-    setTimeout(function() {
-        element.style.pointerEvents = 'auto'; // Mengaktifkan kembali klik
-        messageElement.style.display = 'none'; // Menyembunyikan pesan
-    }, waitTime);
+    const formData = new FormData(form);
 
-    // Kirim form
-    form.submit();
+    fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.id) {
+                // ✅ Redirect ke halaman cetak berdasarkan ID
+                const url = `<?= base_url() ?>cetak${jenisCetak}/${data.id}`;
+                window.open(url, '_blank');
+            } else {
+                alert('Gagal memproses antrian.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat mengirim data.');
+        })
+        .finally(() => {
+            // Aktifkan kembali klik setelah waktu tunggu
+            setTimeout(() => {
+                element.style.pointerEvents = 'auto';
+                messageElement.style.display = 'none';
+            }, waitTime);
+        });
 }
 
 // Event listener untuk "PELAYANAN"
 document.getElementById('antrian-1').addEventListener('click', function() {
-    disableClick('antrian-1', 'antrianForm-1', 'message-1', 'Tunggu sebentar...', 5000); // 5 detik
+    disableClickAndSubmit(
+        'antrian-1',
+        'antrianForm-1',
+        'message-1',
+        'Tunggu sebentar...',
+        5000,
+        'Pelayanan' // Sesuai route: /cetakPelayanan/{id}
+    );
 });
 
 // Event listener untuk "PEREKAMAN"
 document.getElementById('antrian-2').addEventListener('click', function() {
-    disableClick('antrian-2', 'antrianForm-2', 'message-2', 'Tunggu sebentar...', 5000); // 5 detik
+    disableClickAndSubmit(
+        'antrian-2',
+        'antrianForm-2',
+        'message-2',
+        'Tunggu sebentar...',
+        5000,
+        'Perekaman' // Sesuai route: /cetakPerekaman/{id}
+    );
 });
 </script>
+
+
+
 
 
 <?= $this->endSection() ?>
