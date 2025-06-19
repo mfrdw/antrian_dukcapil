@@ -135,32 +135,70 @@ public function getAntrian()
 }
 
 
-
-public function updateNamaLoket($id)
+public function addLoket($idAntrian)
 {
-    // Validasi ID
-    if (!is_numeric($id) || $id <= 0) {
-        return $this->response->setJSON([
+    $userModel = new \App\Models\M_UserModel();
+    $antriModel = new \App\Models\M_DataAntri();
+
+    // 1. Ambil ID user dari session
+    $idUser = session()->get('id');
+    if (!$idUser) {
+        return $this->response->setStatusCode(401)->setJSON([
             'status' => 'error',
-            'message' => 'ID tidak valid.'
+            'message' => 'Session tidak aktif. Silakan login kembali.'
         ]);
     }
 
-    $model = new M_UserModel();
+    // 2. Ambil data user login
+    $user = $userModel->find($idUser);
+    if (!$user) {
+        return $this->response->setStatusCode(404)->setJSON([
+            'status' => 'error',
+            'message' => 'User tidak ditemukan.'
+        ]);
+    }
 
-    $role_loket = $model->where('role_loket', $id);
+    // 3. Ambil data antrian berdasarkan ID dari tombol
+    $antrian = $antriModel->find($idAntrian);
+    if (!$antrian) {
+        return $this->response->setStatusCode(404)->setJSON([
+            'status' => 'error',
+            'message' => 'Data antrian tidak ditemukan.'
+        ]);
+    }
 
-    // Data manual yang ingin dikirim
-    $namaLoket = $role_loket;
+    // 4. Update data antrian
+    $antriModel->update($idAntrian, [
+        'nama_loket' => $user['role_loket'],
+        'user'       => $user['nama'],
+        'created_at' => date('Y-m-d H:i:s')
+    ]);
 
-    // Panggil model antrian
-    $antrianModel = new M_DataAntri();
-    $updated = $antrianModel->update($id, ['nama_loket' => $namaLoket]);
-
-    // Berikan respon JSON
     return $this->response->setJSON([
-        'status' => $updated ? 'success' : 'failed',
-        'message' => $updated ? 'Nama loket berhasil diperbarui.' : 'Gagal memperbarui nama loket.'
+        'status' => 'success',
+        'message' => 'Antrian berhasil diperbarui berdasarkan ID yang diklik.',
+        'data' => [
+            'id' => $idAntrian,
+            'nama_loket' => $user['role_loket'],
+            'user' => $user['nama']
+        ]
+    ]);
+}
+
+
+public function getRoleLoket()
+{
+    $role = session()->get('role_loket');
+    if (!$role) {
+        return $this->response->setStatusCode(401)->setJSON([
+            'status' => 'error',
+            'message' => 'Belum login atau role tidak tersedia.'
+        ]);
+    }
+
+    return $this->response->setJSON([
+        'status' => 'success',
+        'role_loket' => $role
     ]);
 }
 

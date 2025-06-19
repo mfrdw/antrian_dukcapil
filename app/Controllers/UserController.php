@@ -7,11 +7,52 @@ class UserController extends BaseController
 {
     public function display(): string
     {
+        $model = new M_DataAntri(); 
+
+        $no_antri = $model->findAll();
+
+        
         $data = [
         'title' => 'Display Antrian',
+        'no_antri'=> $no_antri
         ];
         return view('user/display', $data);
     }
+
+public function getData()
+{
+    $model = new M_DataAntri();
+
+    // Ambil tanggal hari ini dalam format Y-m-d
+    $today = date('Y-m-d');
+
+    // Ambil semua data antrian hari ini, urutkan dari yang terbaru
+    $data = $model->where('no_antri IS NOT NULL')
+                  ->where('DATE(created_at)', $today)
+                  ->orderBy('created_at', 'DESC')
+                  ->findAll();
+
+    $loketData = [];
+
+    foreach ($data as $row) {
+        $nama_loket = $row['nama_loket'] ?? null;
+
+        if ($nama_loket && !isset($loketData[$nama_loket])) {
+            $loketData[$nama_loket] = [
+                'loket' => $nama_loket,
+                'no_antri' => $row['no_antri'],
+                'kategori' => $row['loket_antri']
+            ];
+        }
+    }
+
+    return $this->response->setJSON(array_values($loketData));
+}
+
+
+
+
+
 
     public function ambil_antrian(): string
     {

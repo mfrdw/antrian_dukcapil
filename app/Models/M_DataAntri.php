@@ -10,7 +10,7 @@ class M_DataAntri extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = [ 
         'loket_antri',
-        'no_antri', 
+        'no_antri',     
         'jumlah_antrian',
         'nama_loket', 
         'user', 
@@ -73,6 +73,16 @@ class M_DataAntri extends Model
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT); // Padding ke tiga digit
         return 'B' . $newNumber;  // Mengembalikan nomor antrian baru dengan prefix B
     }
+
+
+    public function getAntrianWithLoket()
+    {
+        return $this
+            ->select('antrian.*, users.role_loket')
+            ->join('users', 'users.id = antrian.user')
+            ->findAll();
+    }
+
 
 
 

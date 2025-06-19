@@ -59,40 +59,47 @@
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= base_url('/dashboard')?>">
-                            <i class="mdi mdi-grid-large menu-icon"></i>
+                        <a class="nav-link" href="<?= base_url('/dashboard') ?>">
+                            <i class="mdi mdi-view-dashboard menu-icon"></i>
                             <span class="menu-title">Dashboard</span>
                         </a>
                     </li>
+
                     <li class="nav-item nav-category">Antrian</li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('/nama_antrian') ?>">
-                            <i class="mdi mdi-grid-large menu-icon"></i>
+                            <i class="mdi mdi-format-list-bulleted menu-icon"></i>
                             <span class="menu-title">Nama Antrian</span>
                         </a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('/ambil_antrian') ?>">
-                            <i class="mdi mdi-grid-large menu-icon"></i>
+                            <i class="mdi mdi-ticket-confirmation menu-icon"></i>
                             <span class="menu-title">Ambil Antrian</span>
                         </a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('/panggil_antrian') ?>">
-                            <i class="mdi mdi-grid-large menu-icon"></i>
+                            <i class="mdi mdi-bullhorn menu-icon"></i>
                             <span class="menu-title">Panggil Antrian</span>
                         </a>
                     </li>
+
                     <li class="nav-item nav-category">Setting</li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="index.html">
-                            <i class="mdi mdi-grid-large menu-icon"></i>
+                            <i class="mdi mdi-account-cog menu-icon"></i>
                             <span class="menu-title">User Management</span>
                         </a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="index.html">
-                            <i class="mdi mdi-grid-large menu-icon"></i>
+                            <i class="mdi mdi-view-quilt menu-icon"></i>
                             <span class="menu-title">Layout</span>
                         </a>
                     </li>
@@ -135,7 +142,7 @@
             }
 
             // Mengupdate teks sapaan dan tanggal, waktu
-            document.getElementById('greeting').textContent = `${getGreeting()}, Muhammad Fikri`;
+            document.getElementById('greeting').textContent = `${getGreeting()}`;
             document.getElementById('date-time').textContent = getDateTime();
             </script>
 

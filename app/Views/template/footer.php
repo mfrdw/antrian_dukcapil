@@ -3,7 +3,7 @@
               <div class="d-sm-flex justify-content-center justify-content-sm-between">
                   <span class="text-muted text-center text-sm-left d-block d-sm-inline-block"><a
                           href="https://www.disdukcapil.lamandaukab.go.id" target="_blank"> </a></span>
-                  <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights
+                  <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2025. All rights
                       reserved.</span>
               </div>
           </footer>

@@ -12,23 +12,25 @@
                         </div>
                         <div class="card-body">
                             <?php if (!empty($data_antrian)): ?>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">No.</th>
-                                        <th scope="col">Loket Antrian</th>
-                                        <th scope="col">No Antrian</th>
-                                        <th scope="col">Panggil Ulang</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="antrian-body">
-                                    <!-- Data akan diisi oleh JS -->
-                                </tbody>
-                            </table>
+                            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                                <table class="table table-striped" style="min-width: 100%; table-layout: fixed;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">No.</th>
+                                            <th style="width: 150px;">Loket Antrian</th>
+                                            <th style="width: 150px;">No Antrian</th>
+                                            <th style="width: 120px;">Panggil Ulang</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="antrian-body">
+                                        <!-- Data akan diisi oleh JS -->
+                                    </tbody>
+                                </table>
 
-                            <?php else: ?>
-                            <p class="text-center">Tidak ada antrian untuk hari ini.</p>
-                            <?php endif; ?>
+                                <?php else: ?>
+                                <p class="text-center">Tidak ada antrian untuk hari ini.</p>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -44,18 +46,17 @@
                         <div class="card-body">
                             <?php if (!empty($data_antrian)): ?>
                             <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                                <!-- Membuat tabel dapat digulir -->
                                 <table class="table table-striped" style="min-width: 100%; table-layout: fixed;">
                                     <thead>
                                         <tr>
-                                            <th scope="col">No.</th>
-                                            <th scope="col">Loket Antrian</th>
-                                            <th scope="col">No Antrian</th>
-                                            <th scope="col">Panggil</th>
+                                            <th style="width: 50px;" scope="col">No.</th>
+                                            <th style="width: 150px;" scope="col">Loket Antrian</th>
+                                            <th style="width: 150px;" scope="col">No Antrian</th>
+                                            <th style="width: 120px;" scope="col">Panggil</th>
                                         </tr>
                                     </thead>
                                     <tbody id="antrian2-body">
-
+                                        <!-- Diisi oleh JS -->
                                     </tbody>
                                 </table>
                             </div>
@@ -81,17 +82,18 @@
 
             data.forEach(function(antrian, index) {
                 rows += `
-                    <tr>
-                        <td>${counter++}</td>
-                        <td>${antrian.nama_loket}</td>
-                        <td>${antrian.no_antri}</td>
-                        <td>`;
+                <tr>
+                    <td>${counter++}</td>
+                    <td>${antrian.nama_loket}</td>
+                    <td>${antrian.no_antri}</td>
+                    <td>`;
 
+                // Hanya tampilkan tombol untuk 2 antrian pertama
                 if (index < 2) {
                     rows += `
-                        <button class="btn btn-success mt-2" onclick="playAudio('${antrian.no_antri}')">
-                            <i class="fas fa-volume-up"></i>
-                        </button>`;
+                    <button class="btn btn-success mt-2" onclick="playAudio('${antrian.no_antri}')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>`;
                 }
 
                 rows += `</td></tr>`;
@@ -101,12 +103,39 @@
         });
     }
 
-    // Panggil saat halaman load
-    loadAntrian();
+    // Fungsi untuk memainkan audio noAntri + role_loket
+    function playAudio(noAntri) {
+        // 1. Ambil role_loket dari session
+        fetch('/get-role-loket')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Gagal mengambil role_loket dari session:', data.message);
+                    return;
+                }
 
-    // Refresh otomatis tiap 5 detik
+                const roleLoket = data.role_loket;
+                const audioAntri = new Audio(`../dist/assets/audio/${noAntri}.mp3`);
+                const audioLoket = new Audio(`../dist/assets/audio/${roleLoket}.mp3`);
+
+                // 2. Mainkan A001/B001 dulu, lalu Loket
+                audioAntri.play();
+                audioAntri.onended = function() {
+                    audioLoket.play();
+                };
+
+                console.log(`▶ Memutar: ${noAntri}.mp3 lalu ${roleLoket}.mp3`);
+            })
+            .catch(error => {
+                console.error('❌ Error mengambil role_loket:', error);
+            });
+    }
+
+    // Jalankan saat halaman pertama kali load dan refresh setiap 5 detik
+    loadAntrian();
     setInterval(loadAntrian, 5000);
     </script>
+
 
 
 
@@ -120,16 +149,16 @@
 
                 data.forEach(antrian => {
                     rows += `
-                <tr>
-                    <td>${counter++}</td>
-                    <td>${antrian.loket_antri}</td>
-                    <td>${antrian.no_antri}</td>
-                    <td>
-                        <button class="btn btn-success mt-2" onclick="playAudioAndUpdate(this, ${antrian.id}, '${antrian.no_antri}')">
-                            <i class="fas fa-volume-up"></i>
-                        </button>
-                    </td>
-                </tr>`;
+            <tr>
+                <td>${counter++}</td>
+                <td>${antrian.loket_antri}</td>
+                <td>${antrian.no_antri}</td>
+                <td>
+                    <button class="btn btn-success mt-2" onclick="playAudioAndUpdate(this, ${antrian.id}, '${antrian.no_antri}')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </td>
+            </tr>`;
                 });
 
                 document.getElementById('antrian2-body').innerHTML = rows;
@@ -139,69 +168,73 @@
             });
     }
 
-    // Jalankan saat halaman pertama kali load
+    // Jalankan saat halaman pertama kali load dan setiap 5 detik
     loadAntrian2();
     setInterval(loadAntrian2, 5000);
 
-    // Fungsi: mainkan audio + update status dengan spinner
+    // Fungsi: mainkan audio + update status + animasi tombol
     function playAudioAndUpdate(button, id, noAntri) {
         const originalHTML = button.innerHTML;
 
-        // Tampilkan spinner di tombol
-        button.innerHTML =
-            `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Memanggil...`;
+        button.innerHTML = `
+        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>`;
         button.disabled = true;
 
-        // Mainkan audio
-        const audioPath = '../dist/assets/audio/' + noAntri + '.mp3';
-        const audio = new Audio(audioPath);
-        audio.play();
-
-        // Kirim permintaan update ke server
-        fetch(`/update-status-antrian/${id}`, {
-                method: 'POST'
-            })
+        // 1. Ambil role_loket dari session
+        fetch('/get-role-loket')
             .then(response => response.json())
-            .then(result => {
-                if (result.status === 'success') {
-                    console.log('✅ Antrian berhasil diperbarui.');
-                } else {
-                    console.warn('⚠ Gagal update:', result.message);
-                }
-            })
-            .catch(error => {
-                console.error('❌ Error saat update:', error);
-            })
-            .finally(() => {
-                // Reset tombol setelah beberapa detik (opsional)
-                setTimeout(() => {
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Gagal ambil role_loket dari session.');
                     button.innerHTML = originalHTML;
                     button.disabled = false;
-                }, 3000);
+                    return;
+                }
+
+                const roleLoket = data.role_loket;
+                const audioPathAntri = `../dist/assets/audio/${noAntri}.mp3`;
+                const audioPathLoket = `../dist/assets/audio/${roleLoket}.mp3`;
+
+                // 2. Siapkan audio
+                const audioAntri = new Audio(audioPathAntri);
+                const audioLoket = new Audio(audioPathLoket);
+
+                // 3. Play nomor antrian, lalu setelah selesai → play nama loket
+                audioAntri.play();
+                audioAntri.onended = function() {
+                    audioLoket.play();
+                };
+
+                // 4. Update status ke server
+                fetch(`/update_status/${id}`, {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status === 'success') {
+                            console.log('✅ Antrian berhasil diperbarui.');
+                        } else {
+                            console.warn('⚠ Gagal update:', result.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Error saat update:', error);
+                    })
+                    .finally(() => {
+                        setTimeout(() => {
+                            button.innerHTML = originalHTML;
+                            button.disabled = false;
+                        }, 3000);
+                    });
+            })
+            .catch(error => {
+                console.error('❌ Gagal ambil role_loket:', error);
+                button.innerHTML = originalHTML;
+                button.disabled = false;
             });
     }
     </script>
 
-
-
-
-
-    <script>
-    function playAudio(noAntri) {
-        var audioPath = '../dist/assets/audio/' + noAntri + '.mp3';
-
-        var audio = new Audio(audioPath);
-
-        audio.play();
-
-        console.log("Memanggil audio untuk antrian: " + noAntri);
-    }
-
-    document.getElementById("panggil-btn").addEventListener("click", function() {
-        var selectedAntrian = document.getElementById("antrian-select").value;
-        playAudio(selectedAntrian);
-    });
-    </script>
 
 
     <?= $this->endSection() ?>

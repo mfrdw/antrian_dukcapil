@@ -16,14 +16,14 @@
             padding: 0;
             background: white;
             font-family: 'Courier New', monospace;
+            font-weight: bold;
+            /* Semua tulisan menjadi bold */
         }
 
         .ticket {
             width: 57.5mm;
             margin-left: 1mm;
-            /* ✨ Geser sedikit ke kanan */
             padding: 6mm 3mm;
-            /* ✨ padding horizontal dikurangi */
             box-sizing: border-box;
             text-align: center;
             page-break-after: avoid;
@@ -33,7 +33,6 @@
 
         .title {
             font-size: 3.6mm;
-            font-weight: bold;
             text-transform: uppercase;
             line-height: 1.5;
             margin-bottom: 3mm;
@@ -41,14 +40,12 @@
 
         .sub-title {
             font-size: 3.2mm;
-            font-weight: normal;
             margin-bottom: 4mm;
             color: #000;
         }
 
         .antrian {
             font-size: 14mm;
-            font-weight: bold;
             border: 2px dashed #000;
             padding: 5mm 0;
             margin: 4mm 0;
@@ -63,7 +60,7 @@
 
         .time {
             font-size: 3mm;
-            color: #444;
+            color: #000;
             border-top: 1px dashed #000;
             padding-top: 2mm;
         }

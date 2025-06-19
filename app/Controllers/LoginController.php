@@ -15,24 +15,30 @@ class LoginController extends Controller
         return view('admin/login', $data);
     }
 
-    public function authenticate()
-    {
-        $username = $this->request->getPost('username');
-        $password = $this->request->getPost('password');
+public function authenticate()
+{
+    $username = $this->request->getPost('username');
+    $password = $this->request->getPost('password');
 
-        $userModel = new M_UserModel();
-        $user = $userModel->where('username', $username)->first(); 
+    $userModel = new M_UserModel();
+    $user = $userModel->where('username', $username)->first();
 
-        if ($user && $user['password'] == $password) {
-            session()->set('username', $user['username']);
-            session()->set('role_loket', $user['role_loket']);
-            session()->set('logged_in', true);
+    if ($user && $user['password'] === $password) {
+        // Simpan semua data user penting ke session
+        session()->set([
+            'id'         => $user['id'],
+            'username'   => $user['username'],
+            'nama'       => $user['nama'],
+            'role_loket' => $user['role_loket'],
+            'logged_in'  => true
+        ]);
 
-            return redirect()->to('/dashboard'); 
-        } else {
-            return redirect()->back()->with('error', 'Username atau password salah');
-        }
+        return redirect()->to('/dashboard');
+    } else {
+        return redirect()->back()->with('error', 'Username atau password salah');
     }
+}
+
 
     public function logout()
     {

@@ -13,7 +13,9 @@ $routes->get('/dashboard','AdminController::dashboard');
 $routes->get('/panggil_antrian','AdminController::panggil_antrian');
 $routes->get('get-antrian', 'AdminController::getAntrian');
 $routes->get('/get-antrian2', 'AdminController::getAntrian2');
-$routes->post('update-status-antrian/(:num)', 'AdminController::updateNamaLoket/$1');
+$routes->post('update_status/(:num)', 'AdminController::addLoket/$1');
+$routes->get('/get-role-loket', 'AdminController::getRoleLoket');
+
 
 
 
@@ -28,9 +30,8 @@ $routes->post('antrian/perekaman', 'UserController::ambilPerekaman');
 $routes->get('cetakPelayanan/(:num)', 'CetakController::cetakPelayanan/$1');
 $routes->get('cetakPerekaman/(:num)', 'CetakController::cetakPerekaman/$1');
 
+$routes->get('get-data', 'UserController::getData');
 
-
-$routes->post('antrian/ambil_antrian_ajax', 'UserController::ambil_antrian_ajax');
 
 
 // Login
