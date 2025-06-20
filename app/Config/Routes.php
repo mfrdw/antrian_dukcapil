@@ -5,7 +5,6 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'UserController::display');
 $routes->get('/display', 'UserController::display');
 
 
@@ -36,6 +35,6 @@ $routes->get('get-data', 'UserController::getData');
 
 // Login
 
-$routes->get('login', 'LoginController::index');  
+$routes->get('/', 'LoginController::index');  
 $routes->post('login/authenticate', 'LoginController::authenticate');
 $routes->get('/logout', 'LoginController::logout');

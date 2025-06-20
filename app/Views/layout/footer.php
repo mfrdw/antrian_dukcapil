@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="bg-dark text-white py-3 fixed-bottom">
+<!-- <footer class="bg-dark text-white py-3 fixed-bottom">
     <div class="container text-center">
         <div class="marquee">
             <p class="mb-0" style="font-size: 1.3rem; font-weight: bold;">
@@ -7,7 +7,7 @@
             </p>
         </div>
     </div>
-</footer>
+</footer> -->
 
 </div>
 
@@ -15,8 +15,9 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script> -->
 
-<script src="<?= base_url('dist/assets/js/popper.min.js') ?>"></script>
-<script src="<?= base_url('dist/assets/js/bootstrap.bundle.min.js') ?>"></script>
+<script src="<?= base_url('../dist/assets/js/popper.min.js') ?>"></script>
+<script src="<?= base_url('../dist/assets/icons/css/all.min.js') ?>"></script>
+<script src="<?= base_url('../dist/assets/js/bootstrap.bundle.min.js') ?>"></script>
 </body>
 
 </html>
