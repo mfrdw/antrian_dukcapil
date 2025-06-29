@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 12, 2025 at 01:40 PM
--- Server version: 8.0.30
--- PHP Version: 8.1.29
+-- Generation Time: Jun 20, 2025 at 03:25 AM
+-- Server version: 8.4.3
+-- PHP Version: 8.3.22
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,7 +32,7 @@ CREATE TABLE `antrian` (
   `loket_antri` varchar(50) NOT NULL,
   `no_antri` varchar(50) NOT NULL,
   `jumlah_antri` int NOT NULL,
-  `nama_loket` varchar(50) DEFAULT NULL,
+  `nama_loket` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `user` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -42,11 +42,18 @@ CREATE TABLE `antrian` (
 --
 
 INSERT INTO `antrian` (`id`, `loket_antri`, `no_antri`, `jumlah_antri`, `nama_loket`, `user`, `created_at`) VALUES
-(1, 'PELAYANAN', 'A001', 0, NULL, 'Fikri', '2025-06-12 02:38:58'),
-(2, 'PELAYANAN', 'A002', 0, NULL, 'Fikri', '2025-06-12 02:39:09'),
-(3, 'PELAYANAN', 'A003', 0, NULL, 'Fikri', '2025-06-12 02:39:17'),
-(4, 'PELAYANAN', 'A004', 0, NULL, 'Fikri', '2025-06-12 02:39:28'),
-(5, 'PELAYANAN', 'A005', 0, NULL, 'Fikri', '2025-06-12 04:30:07');
+(1, 'PELAYANAN', 'A001', 0, 'Loket 1', 'Muhammad Fikri Ridwan', '2025-06-19 10:20:57'),
+(2, 'REKAM E-KTP', 'B001', 0, 'Loket 6', 'Aditya Fathurrahman', '2025-06-19 10:14:15'),
+(3, 'PELAYANAN', 'A002', 0, 'Loket 3', 'Jacob Adflin', '2025-06-19 10:25:25'),
+(4, 'REKAM E-KTP', 'B002', 0, 'Loket 6', 'Aditya Fathurrahman', '2025-06-19 10:15:11'),
+(5, 'PELAYANAN', 'A003', 0, 'Loket 1', 'Muhammad Fikri Ridwan', '2025-06-19 10:23:49'),
+(6, 'REKAM E-KTP', 'B003', 0, NULL, 'Fikri', '2025-06-19 10:14:56'),
+(7, 'PELAYANAN', 'A004', 0, 'Loket 3', 'Jacob Adflin', '2025-06-19 10:15:29'),
+(8, 'PELAYANAN', 'A001', 0, 'Loket 1', 'Muhammad Fikri Ridwan', '2025-06-20 02:51:45'),
+(9, 'PELAYANAN', 'A002', 0, 'Loket 1', 'Muhammad Fikri Ridwan', '2025-06-20 03:14:03'),
+(10, 'REKAM E-KTP', 'B001', 0, NULL, 'Fikri', '2025-06-20 03:09:36'),
+(11, 'REKAM E-KTP', 'B002', 0, NULL, 'Fikri', '2025-06-20 03:09:49'),
+(12, 'PELAYANAN', 'A003', 0, 'Loket 1', 'Muhammad Fikri Ridwan', '2025-06-20 03:11:05');
 
 -- --------------------------------------------------------
 
@@ -204,8 +211,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `nama`, `username`, `password`, `role_loket`) VALUES
-(1, 'Muhammad Fikri Ridwan', 'fikri', '123', 'Loket 1'),
-(2, 'Aditya Fathurrahman', 'patur', '123', 'Loket 6');
+(1, 'LOKET 1', 'loket1', '123', 'Loket 1'),
+(2, 'LOKET 6', 'loket6', '123', 'Loket 6'),
+(3, 'LOKET 2', 'loket2', '123', 'Loket 2'),
+(4, 'LOKET 3', 'loket3', '123', 'Loket 3'),
+(5, 'LOKET 4', 'loket4', '123', 'Loket 4'),
+(7, 'LOKET 5', 'loket5', '123', 'Loket 5');
 
 --
 -- Indexes for dumped tables
@@ -244,7 +255,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `antrian`
 --
 ALTER TABLE `antrian`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `loket`
@@ -262,7 +273,7 @@ ALTER TABLE `no_antrian`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -44,7 +44,7 @@ public function authenticate()
     {
         session()->destroy();
 
-        return redirect()->to('/login')->with('success', 'Berhasil logout.');
+        return redirect()->to('/')->with('success', 'Berhasil logout.');
     }
 
 }
