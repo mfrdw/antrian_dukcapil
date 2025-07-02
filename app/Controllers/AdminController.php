@@ -159,12 +159,11 @@ public function getAntrian2()
 }
 
 
-
 public function addLoket($idAntrian)
 {
     $userModel = new M_UserModel();
-    $antriModelPelayanan = new M_Pelayanan(); // Model untuk Pelayanan
-    $antriModelPerekaman = new M_Perekaman(); // Model untuk Perekaman
+    $antriModelPelayanan = new M_Pelayanan(); 
+    $antriModelPerekaman = new M_Perekaman();
 
     // 1. Ambil ID user dari session
     $idUser = session()->get('id');
