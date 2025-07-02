@@ -1,42 +1,65 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\M_DataAntri;
+use App\Models\M_Pelayanan;
+use App\Models\M_Perekaman;
 
 class UserController extends BaseController
 {
-    public function display(): string
-    {
-        $model = new M_DataAntri(); 
+public function display(): string
+{
+    $model = new M_Pelayanan(); 
+    $model2 = new M_Perekaman();
 
-        $no_antri = $model->findAll();
+    // Mengambil data antrian dari kedua model
+    $no_antri_pelayanan = $model->findAll();
+    $no_antri_perekaman = $model2->findAll();
 
-        
-        $data = [
+    // Menggabungkan kedua data
+    $no_antri = array_merge($no_antri_pelayanan, $no_antri_perekaman);
+
+    // Menyiapkan data untuk dikirim ke view
+    $data = [
         'title' => 'Display Antrian',
-        'no_antri'=> $no_antri
-        ];
-        return view('user/display', $data);
-    }
+        'no_antri' => $no_antri
+    ];
+
+    // Mengirim data ke view
+    return view('user/display', $data);
+}
+
 
 public function getData()
 {
-    $model = new M_DataAntri();
+    $model = new M_Pelayanan();
+    $model2 = new M_Perekaman();
 
     // Ambil tanggal hari ini dalam format Y-m-d
     $today = date('Y-m-d');
 
-    // Ambil semua data antrian hari ini, urutkan dari yang terbaru
-    $data = $model->where('no_antri IS NOT NULL')
-                  ->where('DATE(created_at)', $today)
-                  ->orderBy('created_at', 'DESC')
-                  ->findAll();
+    // Ambil data antrian dari M_Pelayanan
+    $dataPelayanan = $model->where('no_antri IS NOT NULL')
+                           ->where('DATE(created_at)', $today)
+                           ->orderBy('created_at', 'DESC')
+                           ->findAll();
 
+    // Ambil data antrian dari M_Perekaman
+    $dataPerekaman = $model2->where('no_antri IS NOT NULL')
+                            ->where('DATE(created_at)', $today)
+                            ->orderBy('created_at', 'DESC')
+                            ->findAll();
+
+    // Gabungkan data Pelayanan dan Perekaman
+    $data = array_merge($dataPelayanan, $dataPerekaman);
+
+    // Array untuk menyimpan hasil yang telah diproses
     $loketData = [];
 
+    // Proses setiap data antrian
     foreach ($data as $row) {
         $nama_loket = $row['nama_loket'] ?? null;
 
+        // Cek jika nama loket sudah ada dan belum diproses
         if ($nama_loket && !isset($loketData[$nama_loket])) {
             $loketData[$nama_loket] = [
                 'loket' => $nama_loket,
@@ -46,6 +69,7 @@ public function getData()
         }
     }
 
+    // Mengembalikan data sebagai respons JSON
     return $this->response->setJSON(array_values($loketData));
 }
 
@@ -56,9 +80,10 @@ public function getData()
 
     public function ambil_antrian(): string
     {
-        $model = new M_DataAntri();
+        $model = new M_Pelayanan();
+        $model2 = new M_Perekaman();
         $generated1 = $model->generateNoAntriPelayanan();
-        $generated2 = $model->generateNoAntriPerekaman();
+        $generated2 = $model2->generateNoAntriPerekaman();
         
         $data = [
             'title' => 'Ambil Antrian',
@@ -81,7 +106,7 @@ public function getData()
 
 public function ambilPelayanan()
 {
-    $model = new M_DataAntri();
+    $model = new M_Pelayanan();
 
     // Ambil nomor antrian berikutnya
     $nextNo = $model->generateNoAntriPelayanan();
@@ -120,29 +145,31 @@ public function ambilPelayanan()
     }
 }
 
+
+
 public function ambilPerekaman()
 {
-    $model = new M_DataAntri();
+    $model = new M_Perekaman();
 
-    // Generate nomor antrian perekaman
-    $antri = $model->generateNoAntriPerekaman();
+    // Ambil nomor antrian berikutnya
+    $nextNo = $model->generateNoAntriPerekaman();
 
-    // Cek apakah nomor tersebut sudah ada hari ini
-    $existing = $model->where('no_antri', $antri)
+    // Cek apakah nomor tersebut sudah ada di hari ini
+    $existing = $model->where('no_antri', $nextNo)
                       ->where('DATE(created_at)', date('Y-m-d'))
                       ->first();
 
     if ($existing) {
+        // Jika sudah ada, kembalikan error atau generate ulang
         return $this->response->setJSON([
             'status' => 'error',
-            'message' => "Nomor antrian {$antri} sudah digunakan. Silakan coba lagi."
+            'message' => "Nomor antrian {$nextNo} sudah digunakan. Silakan coba lagi."
         ]);
     }
 
-    // Data siap disimpan
     $data = [
-        'no_antri'     => $antri,
-        'antri'        => $antri,
+        'no_antri'     => $nextNo,
+        'antri'        => $nextNo,
         'loket_antri'  => 'REKAM E-KTP',
         'user'         => 'Fikri',
         'created_at'   => date('Y-m-d H:i:s')
@@ -160,6 +187,53 @@ public function ambilPerekaman()
         ]);
     }
 }
+// public function ambilPerekaman()
+//     {
+//         $model = new M_Perekaman();
+
+//         // Generate nomor antrian perekaman
+//         $antri = $model->generateNoAntriPerekaman();
+
+//         // Cek apakah nomor tersebut sudah ada hari ini
+//         $existing = $model->where('no_antri', $antri)
+//                           ->where('DATE(created_at)', date('Y-m-d'))
+//                           ->where('loket_antri', 'REKAM E-KTP') // Pastikan kategori loket sesuai
+//                           ->first();
+
+//         if ($existing) {
+//             return $this->response->setJSON([
+//                 'status' => 'error',
+//                 'message' => "Nomor antrian {$antri} sudah digunakan. Silakan coba lagi."
+//             ]);
+//         }
+
+//         // Ambil data user yang sedang login (misalnya menggunakan session)
+//         $user = session()->get('username'); // Ambil nama pengguna dari session
+
+//         // Data siap disimpan
+//         $data = [
+//             'no_antri'    => $antri,
+//             'loket_antri' => 'REKAM E-KTP',  // Loket untuk kategori perekaman
+//             'user'        => $user,          // Nama pengguna yang mengambil antrian
+//             'created_at'  => date('Y-m-d H:i:s')  // Tanggal dan waktu saat antrian dibuat
+//         ];
+
+//         // Simpan data antrian ke database
+//         if ($model->save($data)) {
+//             return $this->response->setJSON([
+//                 'status' => 'success',
+//                 'message' => 'Antrian berhasil diambil',
+//                 'id' => $model->getInsertID(),
+//                 'no_antri' => $antri  // Mengirimkan nomor antrian yang baru
+//             ]);
+//         } else {
+//             return $this->response->setJSON([
+//                 'status' => 'error',
+//                 'message' => 'Gagal menyimpan antrian.',
+//                 'errors' => $model->errors()
+//             ]);
+//         }
+//     }
 
 
 

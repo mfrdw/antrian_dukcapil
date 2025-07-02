@@ -3,14 +3,14 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use App\Models\M_Antrian;
-use App\Models\M_DataAntri;
+use App\Models\M_Pelayanan;
+use App\Models\M_Perekaman;
 
 class CetakController extends Controller
 {
    public function cetakPelayanan($id)
 {
-    $model = new M_DataAntri();
+    $model = new M_Pelayanan();
     $antrian = $model->find($id);
 
     if (!$antrian || $antrian['loket_antri'] !== 'PELAYANAN') {
@@ -22,7 +22,7 @@ class CetakController extends Controller
 
 public function cetakPerekaman($id)
 {
-    $model = new M_DataAntri();
+    $model = new M_Perekaman();
     $antrian = $model->find($id);
 
     if (!$antrian || $antrian['loket_antri'] !== 'REKAM E-KTP') {

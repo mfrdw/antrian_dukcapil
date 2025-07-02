@@ -88,36 +88,25 @@ h1 {
                     <form method="POST" action="<?= base_url('antrian/pelayanan') ?>" id="antrianForm-1">
                         <?= csrf_field() ?>
                         <input type="hidden" name="antrian" value="<?= $antri1 ?>">
-                        <!-- Menggunakan hidden input untuk data antrian -->
                         <div class="antrian-number" id="antrian-1">PELAYANAN</div>
                         <p id="message-1" style="display: none; color: red;">Tunggu sebentar...</p>
                     </form>
-
-                    <!-- <button class="btn btn-primary" onclick="window.location.href='<?= base_url('cetakPelayanan') ?>'">
-                        <i class="fas fa-print"></i> Cetak Pelayanan
-                    </button> -->
-
                 </div>
             </div>
             <div class="col-4 d-flex justify-content-center">
                 <div class="loket-card">
-                    <!-- Form for Perekaman -->
                     <form method="POST" action="<?= base_url('antrian/perekaman') ?>" id="antrianForm-2">
                         <?= csrf_field() ?>
                         <input type="hidden" name="antrian" value="<?= $antri2 ?>">
                         <div class="antrian-number" id="antrian-2">PEREKAMAN</div>
                         <p id="message-2" style="display: none; color: red;">Tunggu sebentar...</p>
                     </form>
-
-                    <!-- <button class="btn btn-primary" onclick="window.location.href='<?= base_url('cetakPerekaman') ?>'">
-                        <i class="fas fa-print"></i> Cetak Perekaman
-                    </button> -->
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<!-- 
 <script>
 function disableClickAndSubmit(elementId, formId, messageElementId, message, waitTime, jenisCetak) {
     const element = document.getElementById(elementId);
@@ -181,8 +170,101 @@ document.getElementById('antrian-2').addEventListener('click', function() {
         'Perekaman' // Sesuai route: /cetakPerekaman/{id}
     );
 });
+</script> -->
+
+
+<script>
+// Fungsi untuk menangani klik dan pengiriman data untuk Pelayanan
+function handlePelayananSubmit() {
+    const form = document.getElementById('antrianForm-1');
+    const messageElement = document.getElementById('message-1');
+    const element = document.getElementById('antrian-1');
+
+    // Tampilkan pesan dan nonaktifkan tombol
+    element.style.pointerEvents = 'none';
+    messageElement.innerHTML = 'Tunggu sebentar...';
+    messageElement.style.display = 'block';
+
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.id) {
+                // Redirect ke halaman cetak Pelayanan
+                const url = `<?= base_url() ?>cetakPelayanan/${data.id}`;
+                window.open(url, '_blank');
+            } else {
+                alert('Gagal memproses antrian Pelayanan.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat mengirim data Pelayanan.');
+        })
+        .finally(() => {
+            setTimeout(() => {
+                element.style.pointerEvents = 'auto';
+                messageElement.style.display = 'none';
+            }, 5000);
+        });
+}
+
+// Event listener untuk "PELAYANAN"
+document.getElementById('antrian-1').addEventListener('click', handlePelayananSubmit);
 </script>
 
+<script>
+// Fungsi untuk menangani klik dan pengiriman data untuk Perekaman
+async function handlePerekamanSubmit() {
+    const form = document.getElementById('antrianForm-2');
+    const messageElement = document.getElementById('message-2');
+    const element = document.getElementById('antrian-2');
+
+    // Tampilkan pesan dan nonaktifkan tombol
+    element.style.pointerEvents = 'none';
+    messageElement.innerHTML = 'Tunggu sebentar...';
+    messageElement.style.display = 'block';
+
+    const formData = new FormData(form);
+
+    try {
+        // Kirim form menggunakan Fetch API
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        // Cek apakah status dari server adalah success
+        if (data.status === 'success' && data.id) {
+            // Redirect ke halaman cetak Perekaman berdasarkan ID
+            const url = `<?= base_url() ?>cetakPerekaman/${data.id}`;
+            window.open(url, '_blank');
+        } else {
+            // Jika gagal, tampilkan pesan kesalahan
+            alert('Gagal memproses antrian Perekaman. Coba lagi.');
+        }
+    } catch (error) {
+        // Tangani error jaringan atau kesalahan pengiriman data
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengirim data Perekaman.');
+    } finally {
+        // Aktifkan kembali tombol dan sembunyikan pesan setelah 5 detik
+        setTimeout(() => {
+            element.style.pointerEvents = 'auto';
+            messageElement.style.display = 'none';
+        }, 5000);
+    }
+}
+
+// Event listener untuk "PEREKAMAN"
+document.getElementById('antrian-2').addEventListener('click', handlePerekamanSubmit);
+</script>
 
 
 

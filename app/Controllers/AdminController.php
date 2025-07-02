@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\M_DataAntri;
+use App\Models\M_Pelayanan;
+use App\Models\M_Perekaman;
 use App\Models\M_UserModel;
 
 class AdminController extends BaseController
@@ -14,57 +15,64 @@ class AdminController extends BaseController
         return view('admin/dashboard', $data);
     }
 
-    public function panggil_antrian(): string
-    {
-        $modelAntri = new M_DataAntri();
-        $modelUser = new M_UserModel();
+   public function panggil_antrian(): string
+{
+    $modelAntri = new M_Pelayanan();
+    $modelAntri2 = new M_Perekaman();
+    $modelUser = new M_UserModel();
 
-        // Cek apakah user sudah login dan memiliki role_loket di session
-        if (!session()->has('role_loket')) {
-            // Jika tidak ada session role_loket, redirect ke login atau halaman yang sesuai
-            return redirect()->to('/login');
-        }
-
-        // Ambil role_loket dari session
-        $role_loket_session = session()->get('role_loket');
-
-        // Ambil tanggal hari ini
-        $today = date('Y-m-d');  
-
-        // Menyimpan data antrian yang sesuai
-        $data_antrian = [];
-
-        // Jika role_loket sesuai dengan yang diinginkan
-        if (in_array($role_loket_session, ['Loket 1', 'Loket 2', 'Loket 3', 'Loket 4', 'Loket 5'])) {
-            $loket_antri = 'PELAYANAN';
-        } elseif (strtoupper($role_loket_session) == 'LOKET 6') {
-            $loket_antri = 'REKAM E-KTP';
-        } else {
-            // Jika role_loket tidak sesuai, tampilkan pesan error atau redirect
-            return redirect()->back()->with('error', 'Role Loket tidak valid');
-        }
-
-        // Mengambil data antrian yang sesuai dengan loket_antri dan tanggal hari ini
-        $antrian = $modelAntri->where('loket_antri', $loket_antri)
-                            ->where('DATE(created_at)', $today)
-                            ->findAll();
-
-        $data_antrian = array_merge($data_antrian, $antrian);
-
-        
-
-        // Menyiapkan data untuk ditampilkan ke view
-        $data = [
-            'title' => 'Panggil Antrian',
-            'data_antrian' => $data_antrian
-        ];
-
-        return view('admin/panggil_antrian', $data);
+    // Cek apakah user sudah login dan memiliki role_loket di session
+    if (!session()->has('role_loket')) {
+        // Jika tidak ada session role_loket, redirect ke login atau halaman yang sesuai
+        return redirect()->to('/login');
     }
+
+    // Ambil role_loket dari session
+    $role_loket_session = session()->get('role_loket');
+
+    // Ambil tanggal hari ini
+    $today = date('Y-m-d');  
+
+    // Menyimpan data antrian yang sesuai
+    $data_antrian = [];
+
+    // Tentukan loket_antri berdasarkan role_loket
+    if (in_array($role_loket_session, ['Loket 1', 'Loket 2', 'Loket 3', 'Loket 4', 'Loket 5'])) {
+        $loket_antri = 'PELAYANAN';
+    } elseif (strtoupper($role_loket_session) == 'LOKET 6') {
+        $loket_antri = 'REKAM E-KTP';
+    } else {
+        // Jika role_loket tidak sesuai, tampilkan pesan error atau redirect
+        return redirect()->back()->with('error', 'Role Loket tidak valid');
+    }
+
+    // Ambil data antrian dari model Pelayanan berdasarkan loket_antri dan tanggal hari ini
+    $antrianPelayanan = $modelAntri->where('loket_antri', $loket_antri)
+                                    ->where('DATE(created_at)', $today)
+                                    ->findAll();
+
+    // Ambil data antrian dari model Perekaman berdasarkan loket_antri dan tanggal hari ini
+    $antrianPerekaman = $modelAntri2->where('loket_antri', $loket_antri)
+                                     ->where('DATE(created_at)', $today)
+                                     ->findAll();
+
+    // Gabungkan kedua data antrian (Pelayanan dan Perekaman)
+    $data_antrian = array_merge($antrianPelayanan, $antrianPerekaman);
+
+    // Menyiapkan data untuk ditampilkan ke view
+    $data = [
+        'title' => 'Panggil Antrian',
+        'data_antrian' => $data_antrian
+    ];
+
+    return view('admin/panggil_antrian', $data);
+}
+
 
 public function getAntrian()
 {
-    $model = new M_DataAntri();
+    $modelPelayanan = new M_Pelayanan();
+    $modelPerekaman = new M_Perekaman();
     $today = date('Y-m-d');
     $role_loket_session = session()->get('role_loket');
 
@@ -81,11 +89,20 @@ public function getAntrian()
         ? 'PELAYANAN'
         : 'REKAM E-KTP';
 
-    // Ambil semua antrian sesuai jenis dan tanggal
-    $antrian = $model->where('loket_antri', $loket_antri)
-                     ->where('DATE(created_at)', $today)
-                     ->orderBy('created_at', 'DESC')
-                     ->findAll();
+    // Ambil data antrian dari M_Pelayanan
+    $antrianPelayanan = $modelPelayanan->where('loket_antri', $loket_antri)
+                                        ->where('DATE(created_at)', $today)
+                                        ->orderBy('created_at', 'DESC')
+                                        ->findAll();
+
+    // Ambil data antrian dari M_Perekaman
+    $antrianPerekaman = $modelPerekaman->where('loket_antri', $loket_antri)
+                                        ->where('DATE(created_at)', $today)
+                                        ->orderBy('created_at', 'DESC')
+                                        ->findAll();
+
+    // Gabungkan hasil dari kedua model
+    $antrian = array_merge($antrianPelayanan, $antrianPerekaman);
 
     // Filter: hanya antrian dengan nama_loket yang PERSIS sama dengan role_loket
     $result = [];
@@ -97,11 +114,10 @@ public function getAntrian()
 
     return $this->response->setJSON($result);
 }
-
-
-    public function getAntrian2()
+public function getAntrian2()
 {
-    $model = new M_DataAntri();
+    $modelPelayanan = new M_Pelayanan();
+    $modelPerekaman = new M_Perekaman();
     $today = date('Y-m-d');
     $role_loket_session = session()->get('role_loket');
 
@@ -118,10 +134,18 @@ public function getAntrian()
         ? 'PELAYANAN' 
         : 'REKAM E-KTP';
 
-    // Ambil data antrian sesuai dengan hari ini & jenis loket
-    $antrian = $model->where('loket_antri', $loket_antri)
-                    ->where('DATE(created_at)', $today)
-                    ->findAll();
+    // Ambil data antrian dari M_Pelayanan
+    $antrianPelayanan = $modelPelayanan->where('loket_antri', $loket_antri)
+                                        ->where('DATE(created_at)', $today)
+                                        ->findAll();
+
+    // Ambil data antrian dari M_Perekaman
+    $antrianPerekaman = $modelPerekaman->where('loket_antri', $loket_antri)
+                                        ->where('DATE(created_at)', $today)
+                                        ->findAll();
+
+    // Gabungkan hasil dari kedua model
+    $antrian = array_merge($antrianPelayanan, $antrianPerekaman);
 
     // Filter: HANYA data yang belum dipanggil (nama_loket kosong)
     $result = [];
@@ -135,10 +159,12 @@ public function getAntrian()
 }
 
 
+
 public function addLoket($idAntrian)
 {
-    $userModel = new \App\Models\M_UserModel();
-    $antriModel = new \App\Models\M_DataAntri();
+    $userModel = new M_UserModel();
+    $antriModelPelayanan = new M_Pelayanan(); // Model untuk Pelayanan
+    $antriModelPerekaman = new M_Perekaman(); // Model untuk Perekaman
 
     // 1. Ambil ID user dari session
     $idUser = session()->get('id');
@@ -159,7 +185,26 @@ public function addLoket($idAntrian)
     }
 
     // 3. Ambil data antrian berdasarkan ID dari tombol
-    $antrian = $antriModel->find($idAntrian);
+    $loket_antri = $user['role_loket']; // Loket yang sedang login
+    $antrian = null;
+
+    // Tentukan model berdasarkan nama_loket
+    if (in_array($loket_antri, ['Loket 1', 'Loket 2', 'Loket 3', 'Loket 4', 'Loket 5'])) {
+        // Jika nama_loket adalah Loket 1 - Loket 5, gunakan M_Pelayanan
+        $antrian = $antriModelPelayanan->find($idAntrian);
+        $model = $antriModelPelayanan;
+    } elseif ($loket_antri == 'Loket 6') {
+        // Jika nama_loket adalah Loket 6, gunakan M_Perekaman
+        $antrian = $antriModelPerekaman->find($idAntrian);
+        $model = $antriModelPerekaman;
+    } else {
+        // Jika role_loket tidak valid
+        return $this->response->setStatusCode(400)->setJSON([
+            'status' => 'error',
+            'message' => 'Role Loket tidak valid.'
+        ]);
+    }
+
     if (!$antrian) {
         return $this->response->setStatusCode(404)->setJSON([
             'status' => 'error',
@@ -167,8 +212,8 @@ public function addLoket($idAntrian)
         ]);
     }
 
-    // 4. Update data antrian
-    $antriModel->update($idAntrian, [
+    // 4. Update data antrian dengan nama_loket dan user
+    $model->update($idAntrian, [
         'nama_loket' => $user['role_loket'],
         'user'       => $user['nama'],
         'created_at' => date('Y-m-d H:i:s')
@@ -184,6 +229,7 @@ public function addLoket($idAntrian)
         ]
     ]);
 }
+
 
 
 public function getRoleLoket()
