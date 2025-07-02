@@ -141,13 +141,13 @@ h1 {
 }
 </style>
 
-<div class="container-fluid mt-5">
-    <div class="text-center mb-5">
+<div class="container-fluid mt-3">
+    <!-- <div class="text-center mb-5">
         <h1 class="display-4 font-weight-bold text-uppercase mb-4">LOKET PELAYANAN</h1>
         <p class="lead mb-4" style="font-size: 1.2rem; font-weight: 600; color: #6c757d;">
             DINAS KEPENDUDUKAN DAN PENCATATAN SIPIL
         </p>
-    </div>
+    </div> -->
 
     <!-- Loket Baris 1-3 -->
     <div class="loket-container">
