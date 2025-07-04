@@ -47,17 +47,25 @@
 
 /* Card Footer */
 .loket-card-footer {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #fff;
+    font-size: 1.8rem;
+    /* ⬆️ Ukuran teks diperbesar */
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     margin-top: 20px;
-    border-top: 2px solid #ffffff;
-    /* Garis di atas card footer */
     padding-top: 10px;
-    /* Memberikan jarak antara teks dan garis */
+    border-top: 2px solid #ffffff;
+
+    background: linear-gradient(to right, #fceabb, #f8b500);
+    /* ✨ Warna gradasi elegan */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    /* 💫 Glow lembut */
 }
+
 
 .antrian-number {
     font-size: 4rem;
@@ -142,13 +150,6 @@ h1 {
 </style>
 
 <div class="container-fluid mt-3">
-    <!-- <div class="text-center mb-5">
-        <h1 class="display-4 font-weight-bold text-uppercase mb-4">LOKET PELAYANAN</h1>
-        <p class="lead mb-4" style="font-size: 1.2rem; font-weight: 600; color: #6c757d;">
-            DINAS KEPENDUDUKAN DAN PENCATATAN SIPIL
-        </p>
-    </div> -->
-
     <!-- Loket Baris 1-3 -->
     <div class="loket-container">
         <div class="row">

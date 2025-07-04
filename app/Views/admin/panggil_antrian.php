@@ -1,6 +1,49 @@
 <?= $this->extend('template/header') ?>
 <?= $this->section('content') ?>
 
+<style>
+/* === STYLING UNTUK TABEL ANTRIAN === */
+
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin-top: 10px;
+}
+
+table.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table-custom thead {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table-custom th,
+.table-custom td {
+    padding: 12px 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f3faff;
+    transition: background-color 0.3s ease;
+}
+
+.table-custom td button {
+    min-width: 100px;
+}
+</style>
+
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="row">
@@ -8,28 +51,28 @@
             <div class="col-12 col-md-5">
                 <div class="home-tab">
                     <div class="card">
-                        <div class="card-header">
-                            <h4>Daftar Antrian</h4>
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Daftar Antrian</h4>
                         </div>
                         <div class="card-body text-center">
                             <?php if (!empty($data_antrian)): ?>
-                            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                                <table class="table table-striped" style="min-width: 100%; table-layout: fixed;">
+                            <div class="table-wrapper">
+                                <table class="table table-custom">
                                     <thead>
                                         <tr>
-                                            <th style="width: 50px;">No.</th>
-                                            <th style="width: 150px;">No Antrian</th>
-                                            <th style="width: 120px;">Panggil Ulang</th>
+                                            <th>No.</th>
+                                            <th>No Antrian</th>
+                                            <th>Panggil Ulang</th>
                                         </tr>
                                     </thead>
                                     <tbody id="antrian-body">
                                         <!-- Diisi oleh JavaScript -->
                                     </tbody>
                                 </table>
-                                <?php else: ?>
-                                <p class="text-center small">Tidak ada antrian untuk hari ini.</p>
-                                <?php endif; ?>
                             </div>
+                            <?php else: ?>
+                            <p class="text-center small">Tidak ada antrian untuk hari ini.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -39,19 +82,19 @@
             <div class="col-12 col-md-7">
                 <div class="home-tab">
                     <div class="card">
-                        <div class="card-header">
-                            <h4>Panggil Antrian</h4>
+                        <div class="card-header bg-success text-white">
+                            <h4 class="mb-0">Panggil Antrian</h4>
                         </div>
                         <div class="card-body">
                             <?php if (!empty($data_antrian)): ?>
-                            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                                <table class="table table-striped" style="min-width: 100%; table-layout: fixed;">
+                            <div class="table-wrapper">
+                                <table class="table table-custom">
                                     <thead>
                                         <tr>
-                                            <th style="width: 50px;">No.</th>
-                                            <th style="width: 150px;">Loket Antrian</th>
-                                            <th style="width: 150px;">No Antrian</th>
-                                            <th style="width: 120px;">Panggil</th>
+                                            <th>No.</th>
+                                            <th>Loket Antrian</th>
+                                            <th>No Antrian</th>
+                                            <th>Panggil</th>
                                         </tr>
                                     </thead>
                                     <tbody id="antrian2-body">
@@ -68,8 +111,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script src="../dist/assets/js/jquery-3.6.0.min.js"></script>
 
