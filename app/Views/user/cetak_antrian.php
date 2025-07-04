@@ -74,6 +74,7 @@
         <div class="sub-title">KABUPATEN LAMANDAU</div>
 
         <div class="antrian"><?= $antri ?></div>
+        <span><?= $loket_antri ?></span>
 
         <div class="msg">
             Silakan menunggu hingga nomor Anda dipanggil

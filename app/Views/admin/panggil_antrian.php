@@ -86,7 +86,7 @@
                     <td>${antrian.no_antri}</td>
                     <td>`;
 
-                if (index < 2) {
+                if (index < 5) {
                     rows += `
                     <button class="btn btn-warning btn-sm mt-2" onclick="playAudio(this, '${antrian.no_antri}')">
                         <i class="fas fa-redo"></i>
